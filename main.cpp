@@ -134,27 +134,29 @@ int main(int argc, char *argv[])
     float posicion_actual_y = player.y;
     float angulo_anterior = 0;
 
-    while (true)
+while (true)
+{
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    auto received_message = udp_socket.receive(message_max_size);
+    std::string received_message_content = received_message->received_message;
+
+    vector<string> parsed_message = separate_string(received_message_content);
+
+    if (parsed_message[0].find("see") <= 5)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        auto received_message = udp_socket.receive(message_max_size);
-        std::string received_message_content = received_message->received_message;
+        vector<string> see_message = separate_string(parsed_message[0]);
+        store_data_see(see_message, player, ball, own_goal, opponent_goal, field);
+        decisionTree(player, ball, opponent_goal, udp_socket, server_udp);
 
-        vector<string> parsed_message = separate_string(received_message_content);
+        JugadorCercano jugador_mas_cercano = procesarJugadoresVisibles(see_message, player);
+        mostrarJugadorMasCercano(jugador_mas_cercano);
+    }
 
-        if (parsed_message[0].find("see") <= 5)
-        {
-            vector<string> see_message = separate_string(parsed_message[0]);
-            store_data_see(see_message, player, ball, own_goal, opponent_goal, field);
-            decisionTree(player, ball, opponent_goal, udp_socket, server_udp);
-
-            procesarJugadoresVisibles(see_message, jugadores_visibles);
-            mostrarJugadoresVisibles(jugadores_visibles);
-        }
-            //APARTIR DE AQUÍ
+        //A PARTIR DE AQUÍ
         if (parsed_message[0].find("hear") != string::npos)
         {
-            store_data_hear(parsed_message[0], udp_socket, server_udp); // Llamar función para manejar mensaje 'hear'
+            cout << "Hear message received: " << parsed_message[0] << endl;  // Añadir depuración aquí
+            store_data_hear(parsed_message[0], player, udp_socket, server_udp); // Llamar función para manejar mensaje 'hear'
         }
 
         posicion_anterior_x = posicion_actual_x;

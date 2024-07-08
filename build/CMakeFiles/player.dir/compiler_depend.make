@@ -302,7 +302,17 @@ CMakeFiles/player.dir/functions.cpp.o: ../functions.cpp \
   /usr/include/c++/11/bits/erase_if.h \
   _deps/min_sock-src/src/header/MinimalSocket/core/SocketContext.h \
   /usr/include/c++/11/sstream \
-  /usr/include/c++/11/bits/sstream.tcc
+  /usr/include/c++/11/bits/sstream.tcc \
+  /usr/include/c++/11/thread \
+  /usr/include/c++/11/stop_token \
+  /usr/include/c++/11/bits/std_thread.h \
+  /usr/include/c++/11/semaphore \
+  /usr/include/c++/11/bits/semaphore_base.h \
+  /usr/include/c++/11/bits/atomic_timed_wait.h \
+  /usr/include/c++/11/bits/this_thread_sleep.h \
+  /usr/include/x86_64-linux-gnu/sys/time.h \
+  /usr/include/semaphore.h \
+  /usr/include/x86_64-linux-gnu/bits/semaphore.h
 
 CMakeFiles/player.dir/main.cpp.o: ../main.cpp \
   /usr/include/stdc-predef.h \
@@ -618,6 +628,8 @@ CMakeFiles/player.dir/main.cpp.o: ../main.cpp \
   ../estructuras.h
 
 
+../main.cpp:
+
 /usr/include/x86_64-linux-gnu/sys/time.h:
 
 /usr/include/c++/11/bits/atomic_timed_wait.h:
@@ -625,8 +637,6 @@ CMakeFiles/player.dir/main.cpp.o: ../main.cpp \
 /usr/include/c++/11/bits/semaphore_base.h:
 
 /usr/include/c++/11/semaphore:
-
-../main.cpp:
 
 _deps/min_sock-src/src/header/MinimalSocket/core/SocketContext.h:
 
