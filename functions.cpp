@@ -227,11 +227,13 @@ void store_data_see(vector<string> &see_message, Player &player, Ball &ball, Goa
 
 void chutarPorteria(Player &player, Ball &ball, Goal &opponent_goal, MinimalSocket::udp::Udp<true> &udp_socket, MinimalSocket::Address const &server_udp)
 {
-    float angle = opponent_goal.angle; // Ángulo hacia la portería contraria
+    double angle_to_goal = atan2(stod(opponent_goal.y) - player.y, stod(opponent_goal.x) - player.x) * 180 / M_PI;
     int power = 100; // Potencia del chute
-    std::string kick_command = "(kick " + to_string(power) + " " + to_string(angle) + ")";
+    std::string kick_command = "(kick " + to_string(power) + " " + to_string(angle_to_goal) + ")";
     udp_socket.sendTo(kick_command, server_udp); // Enviar comando de chute
 }
+
+
 
 float calcularDistanciaJugadorBalon(const Player &jugador, const Ball &balon)
 {
@@ -299,7 +301,7 @@ void mostrarJugadorMasCercano(const JugadorCercano &jugador_mas_cercano)
 
 
 
-//A PARTIR DE AQUÍ
+
 
 void store_data_hear(string &hear_message, Player &player, MinimalSocket::udp::Udp<true> &udp_socket, MinimalSocket::Address const &server_udp)
 {
@@ -333,18 +335,15 @@ void store_data_hear(string &hear_message, Player &player, MinimalSocket::udp::U
 
 void orientarJugadorHaciaCampo(Player &player, MinimalSocket::udp::Udp<true> &udp_socket, MinimalSocket::Address const &server_udp)
 {
-    // Supongamos que queremos orientar al jugador hacia el centro del campo (0, 0)
     float target_x = 0.0;
     float target_y = 0.0;
 
     float angle_to_target = atan2(target_y - player.y, target_x - player.x) * 180 / M_PI;
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     std::string turn_command = "(turn " + std::to_string(angle_to_target - player.angle) + ")";
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     udp_socket.sendTo(turn_command, server_udp);
-
-    //std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }
+
 
 
 
@@ -437,4 +436,23 @@ void execute_free_kick(Player &player, MinimalSocket::udp::Udp<true> &udp_socket
     std::string command = "(kick 100 0)";
     udp_socket.sendTo(command, server_udp);
     cout << "Jugador " << player.unum << " ejecuta falta con potencia 100" << endl;
+}
+
+void noMarcarPropia(Player &player, Ball &ball, Goal &own_goal, MinimalSocket::udp::Udp<true> &udp_socket, MinimalSocket::Address const &server_udp)
+{
+    // Si ve la porteria de nuestro equipo intenta chutar atrás para no automarcarsee
+    //Se calcula el angulo para chutar hacia porteria del equipo rivalkajh
+    double angle_away_from_own_goal = atan2(player.y - stod(own_goal.y), player.x - stod(own_goal.x)) * 180 / M_PI;
+    int power = 100; //Le he puesto 100 para alejar la pelota de nuestra área
+    std::string kick_command = "(kick " + to_string(power) + " " + to_string(angle_away_from_own_goal) + ")";
+    udp_socket.sendTo(kick_command, server_udp);
+}
+
+void saqueEsquinaBandaAtras(Player &player, MinimalSocket::udp::Udp<true> &udp_socket, MinimalSocket::Address const &server_udp)
+{
+    // Chutar hacia atrás (en dirección opuesta a la línea de banda)
+    double angle_away_from_line = atan2(-player.y, -player.x) * 180 / M_PI;
+    int power = 50; // Potencia del chute, puede ajustarse según necesidad
+    std::string kick_command = "(kick " + to_string(power) + " " + to_string(angle_away_from_line) + ")";
+    udp_socket.sendTo(kick_command, server_udp); // Enviar comando de chute
 }

@@ -15,7 +15,7 @@ vector<string> separate_string_separator(string &s, string separator);
 void store_data_see(vector<string> &see_message, Player &player, Ball &ball, Goal &own_goal, Goal &opponent_goal, Field &field);
 
 void sendInitialMoveMessage(const Player &player, MinimalSocket::udp::Udp<true> &udp_socket, MinimalSocket::Address const &recipient);
-void decisionTree(Player &player, Ball &ball, Goal &opponent_goal, MinimalSocket::udp::Udp<true> &udp_socket, MinimalSocket::Address const &server_udp);
+void decisionTree(Player &player, Ball &ball, Goal &own_goal, Goal &opponent_goal, MinimalSocket::udp::Udp<true> &udp_socket, MinimalSocket::Address const &server_udp);
 void chutarPorteria(Player &player, Ball &ball, Goal &opponent_goal, MinimalSocket::udp::Udp<true> &udp_socket, MinimalSocket::Address const &server_udp);
 float calcularDistanciaJugadorBalon(const Player &jugador, const Ball &balon);
 
@@ -32,4 +32,6 @@ void execute_corner_kick(Player &player, MinimalSocket::udp::Udp<true> &udp_sock
 void execute_free_kick(Player &player, MinimalSocket::udp::Udp<true> &udp_socket, MinimalSocket::Address const &server_udp);
 void orientarJugadorHaciaCampo(Player &player, MinimalSocket::udp::Udp<true> &udp_socket, MinimalSocket::Address const &server_udp);
 
+void noMarcarPropia(Player &player, Ball &ball, Goal &own_goal, MinimalSocket::udp::Udp<true> &udp_socket, MinimalSocket::Address const &server_udp);
+void saqueEsquinaBandaAtras(Player &player, MinimalSocket::udp::Udp<true> &udp_socket, MinimalSocket::Address const &server_udp);
 #endif

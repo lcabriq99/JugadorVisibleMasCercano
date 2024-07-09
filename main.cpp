@@ -28,7 +28,7 @@ void sendInitialMoveMessage(const Player &player, MinimalSocket::udp::Udp<true> 
 }
 
 // Decisión para las acciones del jugador
-void decisionTree(Player &player, Ball &ball, Goal &opponent_goal, MinimalSocket::udp::Udp<true> &udp_socket, MinimalSocket::Address const &server_udp)
+void decisionTree(Player &player, Ball &ball, Goal &own_goal, Goal &opponent_goal, MinimalSocket::udp::Udp<true> &udp_socket, MinimalSocket::Address const &server_udp)
 {
     if (player.see_ball)
     {
@@ -37,7 +37,20 @@ void decisionTree(Player &player, Ball &ball, Goal &opponent_goal, MinimalSocket
 
         if (ball.distance < 1)
         {
-            chutarPorteria(player, ball, opponent_goal, udp_socket, server_udp);
+            // Verificar la dirección del chute
+            if (player.see_opponent_goal)
+            {
+                chutarPorteria(player, ball, opponent_goal, udp_socket, server_udp);
+            }
+            else if (player.see_own_goal)
+            {
+                noMarcarPropia(player, ball, own_goal, udp_socket, server_udp);
+            }else{
+
+                //Aquí podría ir pasarla, sino ve porteria rival ni la del equipo, pase la plelota
+                //Ahora esta chutar
+                chutarPorteria(player, ball, opponent_goal, udp_socket, server_udp);
+            }
         }
         else
         {
@@ -146,24 +159,24 @@ while (true)
     {
         vector<string> see_message = separate_string(parsed_message[0]);
         store_data_see(see_message, player, ball, own_goal, opponent_goal, field);
-        decisionTree(player, ball, opponent_goal, udp_socket, server_udp);
+        decisionTree(player, ball, own_goal, opponent_goal, udp_socket, server_udp);
 
         JugadorCercano jugador_mas_cercano = procesarJugadoresVisibles(see_message, player);
         mostrarJugadorMasCercano(jugador_mas_cercano);
     }
 
-        //A PARTIR DE AQUÍ
-        if (parsed_message[0].find("hear") != string::npos)
-        {
-            cout << "Hear message received: " << parsed_message[0] << endl;  // Añadir depuración aquí
-            store_data_hear(parsed_message[0], player, udp_socket, server_udp); // Llamar función para manejar mensaje 'hear'
-        }
-
-        posicion_anterior_x = posicion_actual_x;
-        posicion_anterior_y = posicion_anterior_y;
-        posicion_actual_x = player.x;
-        posicion_actual_y = player.y;
-        angulo_anterior = atan2(posicion_actual_y - posicion_anterior_y, posicion_actual_x - posicion_anterior_x) * 180 / M_PI;
+    if (parsed_message[0].find("hear") != string::npos)
+    {
+        cout << "Hear message received: " << parsed_message[0] << endl;  
+        store_data_hear(parsed_message[0], player, udp_socket, server_udp); 
     }
+
+    posicion_anterior_x = posicion_actual_x;
+    posicion_anterior_y = posicion_anterior_y;
+    posicion_actual_x = player.x;
+    posicion_actual_y = player.y;
+    angulo_anterior = atan2(posicion_actual_y - posicion_anterior_y, posicion_actual_x - posicion_anterior_x) * 180 / M_PI;
+}
+
     return 0;
 }

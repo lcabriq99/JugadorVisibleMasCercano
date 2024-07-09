@@ -56,7 +56,7 @@ struct JugadorCercano
     std::string nombreEquipo;
     std::string dorsal;
     float distance;
-    //VIOLETA
+    //NUEVO
     float angle;
 };
 
